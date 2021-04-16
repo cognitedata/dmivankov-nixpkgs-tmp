@@ -43,8 +43,8 @@ let
   # builds. glibcLocales must be before glibc or glibc_multi as otherwiese
   # the wrong LOCALE_ARCHIVE will be used where only C.UTF-8 is available.
   basePkgs = with pkgs;
-    [ glibcLocales
-      (if isMultiBuild then glibc_multi else glibc)
+    [ glibcLocales_patchd
+      (if isMultiBuild then glibc_patchd_multi else glibc_patchd)
       (toString gcc.cc.lib) bashInteractiveFHS coreutils less shadow su
       gawk diffutils findutils gnused gnugrep
       gnutar gzip bzip2 xz
@@ -79,8 +79,8 @@ let
   etcPkg = stdenv.mkDerivation {
     name         = "${name}-chrootenv-etc";
     buildCommand = ''
-      mkdir -p $out/etc
-      cd $out/etc
+      mkdir -p $out/etc3
+      cd $out/etc3
 
       # environment variables
       ln -s ${etcProfile} profile
@@ -216,7 +216,7 @@ let
     done
     cd ..
 
-    for i in var etc opt; do
+    for i in var etc3 opt; do
       if [ -d "${staticUsrProfileTarget}/$i" ]; then
         cp -rsHf "${staticUsrProfileTarget}/$i" "$i"
       fi
@@ -234,6 +234,8 @@ in stdenv.mkDerivation {
     mkdir -p $out
     cd $out
     ${setupTargetProfile}
+    mkdir -p ./etc
+    cp -a $out/etc3/* ./etc
     cd $out
     ${extraBuildCommands}
     cd $out

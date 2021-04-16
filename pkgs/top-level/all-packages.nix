@@ -17402,6 +17402,9 @@ with pkgs;
   glibc = callPackage ../development/libraries/glibc {
     stdenv = gccStdenv; # doesn't compile without gcc
   };
+  glibc_patchd = callPackage ../development/libraries/glibc_patchd {
+    stdenv = gccStdenv; # doesn't compile without gcc
+  };
 
   mtrace = callPackage ../development/libraries/glibc/mtrace.nix { };
 
@@ -17474,10 +17477,15 @@ with pkgs;
 
   # Only supported on Linux
   glibcLocales = if stdenv.hostPlatform.isLinux then callPackage ../development/libraries/glibc/locales.nix { } else null;
+  glibcLocales_patchd = if stdenv.hostPlatform.isLinux then callPackage ../development/libraries/glibc_patchd/locales.nix { } else null;
 
   glibcInfo = callPackage ../development/libraries/glibc/info.nix { };
 
   glibc_multi = callPackage ../development/libraries/glibc/multi.nix {
+    glibc32 = pkgsi686Linux.glibc;
+  };
+
+  glibc_patchd_multi = callPackage ../development/libraries/glibc_patchd/multi.nix {
     glibc32 = pkgsi686Linux.glibc;
   };
 
